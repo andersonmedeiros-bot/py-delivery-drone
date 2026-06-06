@@ -50,16 +50,22 @@ class FlyingRobot(BaseRobot):
 
 class DeliveryDrone(FlyingRobot):
     def __init__(
-        self,
-        name: str,
-        weight: int,
-        coords: list[int] | None = None,
-        max_load_weight: int = 0,
-        current_load: Cargo | None = None
+            self,
+            name: str,
+            weight: int,
+            coords: list[int] | None = None,
+            max_load_weight: int = 0,
+            current_load: Cargo | None = None
     ) -> None:
         super().__init__(name, weight, coords)
         self.max_load_weight = max_load_weight
-        self.current_load = current_load
+
+        # Começa vazio para o hook_load poder validar corretamente
+        self.current_load = None
+
+        # Se foi enviada uma carga inicial, tenta engatar usando o método de validação
+        if current_load is not None:
+            self.hook_load(current_load)
 
     def hook_load(self, cargo: Cargo) -> None:
         if self.current_load is None and cargo.weight <= self.max_load_weight:
